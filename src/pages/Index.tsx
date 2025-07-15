@@ -1,14 +1,40 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react'
+import { ThemeProvider } from '@/components/ThemeProvider'
+import { AuthForm } from '@/components/AuthForm'
+import { Dashboard } from '@/components/Dashboard'
+import { useToast } from '@/hooks/use-toast'
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
-};
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { toast } = useToast()
 
-export default Index;
+  const handleAuth = (data: { email: string; password: string; name?: string }) => {
+    // Mock authentication - in real app this would call API
+    console.log('Auth data:', data)
+    setIsAuthenticated(true)
+    toast({
+      title: "Welcome!",
+      description: data.name ? "Account created successfully!" : "Logged in successfully!",
+    })
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    toast({
+      title: "Logged out",
+      description: "You have been logged out successfully.",
+    })
+  }
+
+  return (
+    <ThemeProvider defaultTheme="light" storageKey="linktree-theme">
+      {isAuthenticated ? (
+        <Dashboard onLogout={handleLogout} />
+      ) : (
+        <AuthForm onAuth={handleAuth} />
+      )}
+    </ThemeProvider>
+  )
+}
+
+export default Index
